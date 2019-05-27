@@ -10,7 +10,7 @@ function responsive(){
   var svgWidth = window.innerWidth;
   var svgHeight = window.innerHeight/2;
 
-  var groupWidth = svgWidth/1.1;
+  var groupWidth = svgWidth/1.2;
   var groupHeight = svgHeight/1.2;
   
   // Lets append svg tag with attr as created above into <div id="scatter">
@@ -22,7 +22,7 @@ function responsive(){
   // now chart that will go inside svg box. group them together so they can be 
   // moved all at once
   var scatterChartGroup = svg.append("g")
-    .attr("transform", `translate(50, ${svgHeight/10})`)
+    .attr("transform", `translate(50, ${svgHeight/20})`)
 
   // --------------- Loading Data
   // Since we are using d3 version 5.
@@ -82,26 +82,34 @@ function responsive(){
 
     // Appending text to circles
     // --------------------- Q: Any other way?
-    var innerChartScatter = scatterChartGroup.selectAll()
+    var innerDataScatter = scatterChartGroup.selectAll()
       .data(fulldata)
       .enter()
       .append("text")
       .attr("x", d => xScale(d.poverty))
-      .attr("y", d => yScale(d.healthcare))
+      .attr("y", d => yScale(d.healthcare) + 3) // +3 to move it down a bit.
       .style("fill", "white")
       .style("font-size", "10px")
       .style("text-anchor", "middle")
       .text(d => d.abbr) // fulldata have abbr for each city in U.S.
 
 
-    // axes Labels
-    scatterChartGroup.append("text")
+      // axes Labels: y-axis
+      scatterChartGroup.append("text")
+      .classed("aText", true)
       .attr("transform", "rotate(-90)")
+      .attr("x", -(groupHeight/2))
       .attr("y", 0 - 50)
-      .attr("x", 0 - (groupHeight / 2))
       .attr("dy", "1em")
-      .attr("class", "axisText")
-      .text("Number of Billboard 100 Hits");
+      .attr("text-anchor", "middle")
+      .text("% of people lacking HealthCare");
+
+      // axes Labels: x-axis
+      scatterChartGroup.append("text")
+        .classed("aText", true) // give it a class to get style from css
+        .attr("transform", `translate(${groupWidth/2}, ${groupHeight + 35 })`)
+        .text("Poverty rate (%)")
+
   }; // end of successCall
 
 };

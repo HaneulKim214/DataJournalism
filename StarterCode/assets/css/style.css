@@ -15,6 +15,9 @@ body {
   /* Padding bottom by footer height */
   padding-bottom: 80px;
 }
+#scatter {
+  margin-left: 75px;
+}
 
 .article {
   margin-right: 10%;
@@ -36,3 +39,11 @@ body {
   margin: 0;
   font-size: 16px;
 }
+
+@media screen and (max-width: 830px) {
+  #scatter{
+    margin-left: 30px;
+  }
+}
+
+
