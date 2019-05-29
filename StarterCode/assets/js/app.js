@@ -29,21 +29,47 @@ function responsive(){
 
   // ------------ Function for changing x-Axis label scale
   function changeXscale(fulldata, clicked_xLabel){
-    var xArray = fulldata.map(d => d[clicked_xLabel]);
-    // Creating new scale with data that corresponds to clicked Label
-    console.log(fulldata, clicked_xLabel, xArray);
     var newXscale = d3.scaleLinear()
-      .domain([d3.min(xArray) * 0.8 , d3.max(xArray * 1.2)]) // since we don't want our first and last point to be at very end.
-      .range([0, groupHeight]);
+      .domain([d3.min(fulldata, d => d[CurrentXLabel])* 0.8, 
+               d3.max(fulldata, d => d[CurrentXLabel])* 1.2]) // since we don't want our first and last point to be at very end.
+      .range([0, groupWidth]);
 
     return newXscale;
-  }
+  };
 
   function changeXAxis(clicked_xScale, xAxis) {
     // when this function is called transition current to new axis
     xAxis.transition()
       .duration(1000)
-      .call(d3.axisBottom(clicked_xScale)) //new one with new scale
+      .call(d3.axisBottom(clicked_xScale)); //new one with new scale
+    return xAxis
+  };
+
+  function changeCircles(innerChartCircle, xScale, CurrentXLabel){
+    innerChartCircle.transition()
+        .duration(1000)
+        .attr("cx", d => xScale(d[CurrentXLabel]));
+    
+    return innerChartCircle;
+  };
+  function changeText()
+  function updateToolTip(clicked_xLabel, innerChartCircle){};
+
+  // ---------------- Function for chaning y-Axis 
+  function changeYscale(fulldata, clicked_yLabel){
+    var newYscale = d3.scaleLinear()
+      .domain([d3.min(fulldata, d => d[CurrentYLabel])* 0.8, 
+               d3.max(fulldata, d => d[CurrentYLabel])]) // since we don't want our first and last point to be at very end.
+      .range([groupHeight, 0]);
+
+    return newYscale;
+  };
+  function changeYAxis(clicked_yScale, yAxis) {
+    // when this function is called transition current to new axis
+    yAxis.transition()
+      .duration(1000)
+      .call(d3.axisLeft(clicked_yScale)); //new one with new scale
+    return yAxis
   };
 
   // --------------- Loading Data
@@ -52,7 +78,7 @@ function responsive(){
   function error(error) {throw err;}
   // if no error run this function
   function successCall(fulldata){
-
+    console.log(fulldata);
     // since d3.csv read everything into string, convert numbers to int
     fulldata.forEach(function(data){
       // y-axes
@@ -66,34 +92,29 @@ function responsive(){
       data.income = +data.income;
     });
     
-    // ------------------ Setting Inital scale, axis, circles, and Text on circles
+    // ------------------ update scale depending on selected XLabel
     var xScale = changeXscale(fulldata, CurrentXLabel);
-    console.log(xScale(fulldata[1][CurrentXLabel]));
 
-    var hc = fulldata.map(d => d.healthcare);
-    console.log(d3.extent(hc));
-    var yScale = d3.scaleLinear()
-    // min is 4.6
-      .domain([0, d3.max(hc)])
-      .range([groupHeight, 0])
+    var yScale = changeYscale(fulldata, CurrentYLabel);
 
     // Creating axis with our scale
     var xAxis = d3.axisBottom(xScale)
     var yAxis = d3.axisLeft(yScale)
 
-    scatterChartGroup.append("g")
-      .attr("transform", `translate(0, ${groupHeight})`)
-      .call(xAxis);
-    scatterChartGroup.append("g")
-      .call(yAxis);
+    var xAxis = scatterChartGroup.append("g")
+                .attr("transform", `translate(0, ${groupHeight})`)
+                .call(xAxis);
+
+    var yAxis = scatterChartGroup.append("g")
+                .call(yAxis);
 
     // NOTE: scatterChartGroup consist of 3 groups x,y-axis, and chart
-    var innerChartScatter = scatterChartGroup.selectAll("circle")
+    var innerChartCircle = scatterChartGroup.selectAll("circle")
       .data(fulldata)
       .enter()
       .append("circle")
       .attr("cx", d => xScale(d[CurrentXLabel]))
-      .attr("cy", d => yScale(d.healthcare))
+      .attr("cy", d => yScale(d[CurrentYLabel]))
       .attr("r", 10)
       .attr("fill", "green")
       .attr("opacity", 0.4)
@@ -101,12 +122,14 @@ function responsive(){
 
     // Appending text to circles
     // --------------------- Q: Any other way?
-    var innerDataScatter = scatterChartGroup.selectAll()
+    console.log(fulldata[2][CurrentXLabel])
+
+    var innerDataText = scatterChartGroup.selectAll()
       .data(fulldata)
       .enter()
       .append("text")
       .attr("x", d => xScale(d[CurrentXLabel]))
-      .attr("y", d => yScale(d.healthcare) + 3) // +3 to move it down a bit.
+      .attr("y", d => yScale(d[CurrentYLabel]) + 3) // +3 to move it down a bit.
       .style("fill", "white")
       .style("font-size", "10px")
       .style("text-anchor", "middle")
@@ -174,12 +197,25 @@ function responsive(){
         console.log(`You've clicked ${clicked_xLabel}`)
 
         // now clicked axis become current one.
-        CurrentXAxis = clicked_xLabel;
-        // updating xScale, xAxis, Circles, and text
-        var clicked_xScale = changeXscale(fulldata, clicked_xLabel);
+        CurrentXLabel = clicked_xLabel;
 
-        var clicked_XAxis = changeXAxis(clicked_xScale, xAxis);
-      }
+        console.log(CurrentXLabel);
+        // updating xScale, xAxis, Circles, and text
+        xScale = changeXscale(fulldata, clicked_xLabel);
+        xAxis = changeXAxis(xScale, xAxis);
+        innerChartCircle = changeCircles(innerChartCircle, xScale, CurrentXLabel);
+        // innerDataText = 
+      };
+    
+    yAxesGroup.selectAll("text").on("click", function(){
+      var clicked_yLabel = d3.select(this).attr("value");
+      if (clicked_yLabel != CurrentYLabel){
+        CurrentYLabel = clicked_yLabel
+        var clicked_yScale = changeYscale(fulldata, clicked_yLabel);
+        var clicked_YAxis = changeYAxis(clicked_yScale, yAxis);
+      };
+    })
+    
     });
   }; // end of successCall
 
