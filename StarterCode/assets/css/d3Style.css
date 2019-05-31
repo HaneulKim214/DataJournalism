@@ -41,17 +41,19 @@
   margin: 0;
 }
 
-.d3-tip {
-  padding: 6px;
-  font-size: 12px;
-  line-height: 1;
-  line-height: 1.5em;
-  color: #fff;
+.tooltip {
+  position: absolute;
+  width: 80px;
+  height: 50px;
+  padding: 10px;
+  font: 12px sans-serif;
   text-align: center;
-  text-transform: capitalize;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 4px;
+  color: white;
+  background: blue;
+  border-radius: 10px;
+  display: none;
 }
+
 
 /* Mobile Rules */
 @media screen and (max-width: 530px) {

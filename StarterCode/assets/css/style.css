@@ -14,9 +14,30 @@ body {
   /* background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../data/newpapaer_bg.jpg'); */
   /* Padding bottom by footer height */
   padding-bottom: 80px;
+  background-color: rgb(170, 162, 162);
 }
+
+.heading {
+  background-color: rgb(226, 204, 178);
+  opacity: 0.8;
+}
+
+
 #scatter {
   margin-left: 75px;
+}
+
+ol {
+  text-align: center;
+  list-style-position: inside;
+}
+ul {
+  text-align: center;
+  list-style-position: inside;
+}
+
+.smoking, .obesity {
+  margin-top: 3rem;
 }
 
 .article {
@@ -33,7 +54,7 @@ body {
   padding-top: 20px;
   padding-bottom: 40px;
   text-align: center;
-  background-color: #ffe7e783;
+  background-color: rgb(216, 193, 165);
 }
 
 #footer p {

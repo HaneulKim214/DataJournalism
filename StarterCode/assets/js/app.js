@@ -45,18 +45,26 @@ function responsive(){
     return xAxis
   };
 
-  function changeCircles(innerChartCircle, xScale, CurrentXLabel){
+  function changeCircles(innerChartCircle, xScale, CurrentXLabel, yScale, CurrentYLabel){
     innerChartCircle.transition()
         .duration(1000)
-        .attr("cx", d => xScale(d[CurrentXLabel]));
-    
+        .attr("cx", d => xScale(d[CurrentXLabel])) // from older version, transition to new
+        .attr("cy", d => yScale(d[CurrentYLabel]));
     return innerChartCircle;
   };
-  function changeText()
-  function updateToolTip(clicked_xLabel, innerChartCircle){};
+
+  function changeText(innerDataText, xScale, CurrentXLabel, yScale, CurrentYLabel, fillcolor){
+    innerDataText.transition()
+        .duration(1000)
+        .attr("x", d => xScale(d[CurrentXLabel])) // using passed in xScale.
+        .attr("y", d => yScale(d[CurrentYLabel]))
+        .style("fill", fillcolor);
+    return innerDataText;
+  };
+
 
   // ---------------- Function for chaning y-Axis 
-  function changeYscale(fulldata, clicked_yLabel){
+  function changeYscale(fulldata, CurrentYLabel){
     var newYscale = d3.scaleLinear()
       .domain([d3.min(fulldata, d => d[CurrentYLabel])* 0.8, 
                d3.max(fulldata, d => d[CurrentYLabel])]) // since we don't want our first and last point to be at very end.
@@ -124,16 +132,29 @@ function responsive(){
     // --------------------- Q: Any other way?
     console.log(fulldata[2][CurrentXLabel])
 
-    var innerDataText = scatterChartGroup.selectAll()
+    var innerDataText = scatterChartGroup.selectAll(".stateText")
       .data(fulldata)
       .enter()
       .append("text")
+      .classed("stateText", true)
       .attr("x", d => xScale(d[CurrentXLabel]))
       .attr("y", d => yScale(d[CurrentYLabel]) + 3) // +3 to move it down a bit.
+      .attr("dy", 3)
       .style("fill", "white")
       .style("font-size", "10px")
       .style("text-anchor", "middle")
-      .text(d => d.abbr) // fulldata have abbr for each city in U.S.
+      .text(d => d.abbr); // fulldata have abbr for each city in U.S.
+    
+    var tooltip = d3.select("body").append("div").classed("tooltip",true);
+
+    innerChartCircle.on("mouseover", function(d,i){
+      tooltip.style("display", "block");
+      tooltip.html("Hello World")
+        .style("left", d3.event.pageX + "px")
+        .style("top", d3.event.pageY + "px")
+    }).on("mouseout", function(){
+      tooltip.style("display", "none")
+    });
 
     // ----------- group for all three x-axes labels
     var xAxesGroup = scatterChartGroup.append("g")
@@ -142,17 +163,20 @@ function responsive(){
     // add x-axis label to xAxesGroup, assign it to name so it can be called
     var xLabelPoverty = xAxesGroup.append("text")
       .classed("aText", true) // give it a class to get style from css
+      .classed("active", true) // bold effect if plotted.
       .attr("value", "poverty")
       .text("Poverty rate (%)")
     
     var xLabelAge = xAxesGroup.append("text")
       .classed("aText", true) // give it a class to get style from css
+      .classed("inactive", true)
       .attr("y", 25)
       .attr("value", "age")
       .text("Age (Median)")
 
     var xLabelIncome = xAxesGroup.append("text")
       .classed("aText", true) // give it a class to get style from css
+      .classed("inactive", true)
       .attr("y", 50)
       .attr("value", "income")
       .text("Household Income (Median)")
@@ -163,32 +187,26 @@ function responsive(){
 
     var yLabelHealth = yAxesGroup.append("text")
       .classed("aText", true)
+      .classed("active",true)
       .attr("transform", "rotate(-90)")
       .attr("y", -25)
       .attr("value", "healthcare") // so it can be reached on event listener
       .text("population lacking HealthCare (%)")
     var yLabelSmoke = yAxesGroup.append("text")
       .classed("aText", true)
+      .classed("inactive",true)
       .attr("transform", "rotate(-90)")
       .attr("y", -50)
       .attr("value", "smokes")
       .text("Smoking population (%)")
     var yLabelObese = yAxesGroup.append("text")
       .classed("aText", true)
+      .classed("inactive",true)
       .attr("transform", "rotate(-90)")
       .attr("y", -75)
       .attr("value", "obesity")
       .text("Obese (%)")
 
-    // // axes Labels: y-axis
-    // scatterChartGroup.append("text")
-    //   .classed("aText", true)
-    //   .attr("transform", "rotate(-90)")
-    //   .attr("x", -(groupHeight/2))
-    //   .attr("y", 0 - 50)
-    //   .attr("dy", "1em")
-    //   .attr("text-anchor", "middle")
-    //   .text("% of people lacking HealthCare");
 
     // Event listener for xAxes labels
     xAxesGroup.selectAll("text").on("click", function(){ // run this function when any xAxes label clicked
@@ -201,26 +219,78 @@ function responsive(){
 
         console.log(CurrentXLabel);
         // updating xScale, xAxis, Circles, and text
-        xScale = changeXscale(fulldata, clicked_xLabel);
+        xScale = changeXscale(fulldata, CurrentXLabel);
         xAxis = changeXAxis(xScale, xAxis);
-        innerChartCircle = changeCircles(innerChartCircle, xScale, CurrentXLabel);
-        // innerDataText = 
-      };
+        innerChartCircle = changeCircles(innerChartCircle, xScale, CurrentXLabel, yScale, CurrentYLabel);
+        
+        if (CurrentXLabel == "poverty"){
+          xLabelPoverty.classed("inactive", false);
+          xLabelPoverty.classed("active", true);
+
+          // deactivate not current active label
+          xLabelAge.classed("inactive", true);
+          xLabelIncome.classed("inactive", true);
+
+          fillcolor = "white"
+          innerDataText = changeText(innerDataText, xScale, CurrentXLabel, yScale, CurrentYLabel, fillcolor);
+        } else if (CurrentXLabel == "age"){
+          xLabelAge.classed("inactive", false);
+          xLabelAge.classed("active", true);
+
+          // deactivate not current active label
+          xLabelIncome.classed("inactive", true);
+          xLabelPoverty.classed("inactive", true);
+
+          // activate current active label
+
+          fillcolor = "black"
+          innerDataText = changeText(innerDataText, xScale, CurrentXLabel, yScale, CurrentYLabel, fillcolor);
+        } else if (CurrentXLabel == "income"){
+          xLabelIncome.classed("inactive", false);
+          xLabelIncome.classed("active", true);
+
+          // deactivate not current active label
+          xLabelAge.classed("inactive", true);
+          xLabelPoverty.classed("inactive", true);
+
+          fillcolor = "red"
+          innerDataText = changeText(innerDataText, xScale, CurrentXLabel, yScale, CurrentYLabel, fillcolor);
+        }
+      }}); 
     
     yAxesGroup.selectAll("text").on("click", function(){
       var clicked_yLabel = d3.select(this).attr("value");
       if (clicked_yLabel != CurrentYLabel){
         CurrentYLabel = clicked_yLabel
-        var clicked_yScale = changeYscale(fulldata, clicked_yLabel);
-        var clicked_YAxis = changeYAxis(clicked_yScale, yAxis);
-      };
-    })
+        yScale = changeYscale(fulldata, clicked_yLabel);
+        yAxis = changeYAxis(yScale, yAxis);
+        innerChartCircle = changeCircles(innerChartCircle, xScale, CurrentXLabel, yScale, CurrentYLabel);
+        innerDataText = changeText(innerDataText, xScale, CurrentXLabel, yScale, CurrentYLabel);
+
+        if (CurrentYLabel == "healthcare"){
+          yLabelHealth.classed("inactive", false)
+          yLabelHealth.classed("active", true);
+
+          yLabelObese.classed("inactive", true);
+          yLabelSmoke.classed("inactive", true);
+        } else if (CurrentYLabel == "smokes"){
+          yLabelSmoke.classed("inactive", false);
+          yLabelSmoke.classed("active", true);
+
+          yLabelObese.classed("inactive", true);
+          yLabelHealth.classed("inactive", true)
+        } else if (CurrentYLabel == "obesity"){
+          yLabelObese.classed("inactive", false);
+          yLabelObese.classed("active", true);
+
+          yLabelSmoke.classed("inactive", true);
+          yLabelHealth.classed("inactive", true)
+        }
+      }});
     
-    });
   }; // end of successCall
 
-};
-
+}; //end of function responsive
 
 
 responsive();

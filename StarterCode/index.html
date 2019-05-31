@@ -18,8 +18,9 @@
 </head>
 
 <body>
-  <div class="text-center">
+  <div class="text-center heading">
         <h1>D3Times</h1>
+        <h5>Dynamic charts on health related data on 2014 United States.</h5>
   </div>
 
     <div class="row">
@@ -29,25 +30,74 @@
         </div>
       </div>
     </div>
-    <div class="row text-center content">
-      <div class="col-xs-12">
-        <div class="article">
+    <div class="content">
+        <div class="text-center article">
           <h2>Correlations Discovered Between Health Risks and Age, Income</h2>
-          <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
-            quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean
-            ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-
-          <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
-            quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean
-            ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-
-          <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
-            quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean
-            ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+          <p>Dataset used to create plots above is from <a href="https://factfinder.census.gov/faces/nav/jsf/pages/searchresults.xhtml">
+          here</a> and year 2014 has been used.</p>
+          <p>Click different x axis labels and y axis labels to see 9 different possible correlations</p>
+          <h4>HealthCare Vs:</h4>
         </div>
-      </div>
+          <ol>
+            <li><b>Poverty Rate</b>
+              <ul>
+                <li>There is definite positive relation ship between population lacking health care and 
+                  poverty rate.
+                </li>
+                <li>This maybe due to lack of hospitals around cities with high poverty rate or simply people not wanting to pay
+                  extra dollars on seeing doctors.
+                </li>
+              </ul>
+            </li>
+            <li><b>Age</b>
+              <ul>
+                <li>No clear correlation however one could better this plot by instead of taking mean age, take multiple age groups and find difference between them, and ask questions like which age group lacks healthcare the most.</li>
+              </ul>
+            </li>
+            <li><b>Household Income</b>
+            <ul>
+              <li>Clear negative correlation. People with higher income tend to have better health care</li>
+            </ul>
+            </li>
+          </ol>
+        <div class="text-center smoking">
+          <h4>Smoking Population Vs:</h4>
+          <ol>
+            <li><b>Poverty Rate</b>
+              <ol>
+                <li>Surprisingly, cities with higher poverty rate has greater smoking population.</li>
+                <li>Interesting fact is that south east cities tend to have greater poverty rate.</li>
+              </ol>
+            </li>
+            <li><b>Age</b>
+              <ol>
+                <li>No clear correlations</li>
+                <li>Again, south east cities have greatest smoking populations</li>
+              </ol>
+            </li>
+            <li><b>Household Income</b>
+              <ol>
+                <li>Negative correlation similar to poverty rate vs. Household income.</li>
+              </ol>
+            </li>
+          </ol>
+        </div>
+
+        <div class="text-center obesity">
+          <h4>Obese Population Vs:</h4>
+          <ul>
+            <li>Similar trend with other two Y-labels.</li>
+          </ul>
+        </div>
+
+        <div class="text-center">
+          <h4>Conclusion</h4>
+            <p>There are similarities between all the y-labels. Obese population, smoking population, and population that lack healthcare all seem to have similar trends
+              that is as poverty rate increase all y-axis features increases and display negative correlation with household income.
+            </p>
+            <p>Assumption that can be made is that people who live in high poverty cities are prone to smoking, bad diet, and therefore do not really care about their health.</p>
+        </div>
     </div>
-  </div>
 
   <!-- Footer-->
   <div id="footer">
