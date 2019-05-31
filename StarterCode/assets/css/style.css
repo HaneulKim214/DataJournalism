@@ -14,7 +14,8 @@ body {
   /* background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../data/newpapaer_bg.jpg'); */
   /* Padding bottom by footer height */
   padding-bottom: 80px;
-  background-color: rgb(170, 162, 162);
+  background-color: rgb(236, 229, 229);
+
 }
 
 .heading {
