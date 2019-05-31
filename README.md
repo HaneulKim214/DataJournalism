@@ -1,6 +1,6 @@
 # DataJournalism
 
-![Newsroom](https://media.giphy.com/media/v2xIous7mnEYg/giphy.gif)
+![MainPageGif](images/mainpage.gif)
 
 ## Project Status: Finished
 
