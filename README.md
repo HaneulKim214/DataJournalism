@@ -1,6 +1,6 @@
 # DataJournalism
 
-![MainPageGif](images/mainpage.gif)
+![MainPageGif](images/main.gif)
 
 ## Project Status: Finished
 
